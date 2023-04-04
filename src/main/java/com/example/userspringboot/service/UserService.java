@@ -5,6 +5,7 @@ import com.example.userspringboot.repository.UserRepository;
 import com.example.userspringboot.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.List;
@@ -54,14 +55,17 @@ public class UserService implements UserServiceImpl {
              ) {
             userServiceImpl.save(user);
         }
-        return userServiceImpl.findAll();
+        return getListUser();
     }
 
-    @Override
-    public void uploadFile() {
+
+    public void uploadFile(MultipartFile file) {
         String line ="";
         try{
-            BufferedReader bufferedReader=new BufferedReader(new FileReader("C:\\Users\\tuyen\\Downloads\\demo.csv"));
+            BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(file.getInputStream()));
+            if(bufferedReader==null){
+                bufferedReader=new BufferedReader(new FileReader("C:\\Users\\tuyen\\Downloads\\demo.csv"));
+            }
             while ((line = bufferedReader.readLine())!=null){
                   String[] arr= line.split(",");
                   User user=new User();
@@ -69,8 +73,9 @@ public class UserService implements UserServiceImpl {
                   user.setName(arr[1]);
                   user.setAdd(arr[3]);
                   user.setAge(Integer.parseInt(arr[2]));
-                System.out.println(user.toString());
+                //System.out.println(user.toString());
                   userServiceImpl.save(user);
+
             }
         }catch (NullPointerException e){
             e.printStackTrace();
