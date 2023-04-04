@@ -6,6 +6,7 @@ import com.example.userspringboot.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
 import java.util.List;
 
 @Service
@@ -41,4 +42,43 @@ public class UserService implements UserServiceImpl {
     public List<User> getListUser() {
         return userServiceImpl.findAll();
     }
+
+    @Override
+    public User getUser(Integer id) {
+        return userServiceImpl.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<User> addListUser(List<User> userList) {
+        for (User user:userList
+             ) {
+            userServiceImpl.save(user);
+        }
+        return userServiceImpl.findAll();
+    }
+
+    @Override
+    public void uploadFile() {
+        String line ="";
+        try{
+            BufferedReader bufferedReader=new BufferedReader(new FileReader("C:\\Users\\tuyen\\Downloads\\demo.csv"));
+            while ((line = bufferedReader.readLine())!=null){
+                  String[] arr= line.split(",");
+                  User user=new User();
+                  user.setId(Integer.valueOf(arr[0]));
+                  user.setName(arr[1]);
+                  user.setAdd(arr[3]);
+                  user.setAge(Integer.parseInt(arr[2]));
+                System.out.println(user.toString());
+                  userServiceImpl.save(user);
+            }
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

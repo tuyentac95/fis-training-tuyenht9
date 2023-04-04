@@ -5,6 +5,7 @@ import com.example.userspringboot.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.List;
 
 @RestController
@@ -28,6 +29,10 @@ public class UserController {
     @GetMapping
     public List<User> getListUser(){
         return userServiceImpl.getListUser();
+    }
+    @PostMapping("/loadfile")
+    public void updateUserFromFile(){
+        userServiceImpl.uploadFile();
     }
 
 }
