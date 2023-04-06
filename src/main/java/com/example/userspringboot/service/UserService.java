@@ -19,6 +19,8 @@ public class UserService implements UserServiceImpl {
         if(user.getName().isEmpty()||user.getName()==null){
             return null;
         }
+        //user.setFavorite(user.getFavorite().toString());
+        //System.out.println(user.getFavorite());
         return userServiceImpl.save(user);
     }
 
@@ -31,6 +33,7 @@ public class UserService implements UserServiceImpl {
         user1.setAge(user.getAge());
         user1.setName(user.getName());
         user1.setAdd(user.getAdd());
+        //user1.setIdhome(user.getIdhome());
         return userServiceImpl.save(user1);
     }
 
@@ -51,21 +54,23 @@ public class UserService implements UserServiceImpl {
 
     @Override
     public List<User> addListUser(List<User> userList) {
-        for (User user:userList
-             ) {
-            userServiceImpl.save(user);
-        }
+        userServiceImpl.saveAll(userList);
         return getListUser();
     }
 
 
     public void uploadFile(MultipartFile file) {
         String line ="";
+
         try{
-            BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(file.getInputStream()));
-            if(bufferedReader==null){
-                bufferedReader=new BufferedReader(new FileReader("C:\\Users\\tuyen\\Downloads\\demo.csv"));
-            }
+            File convFile = new File(file.getOriginalFilename());
+            FileOutputStream fos = new FileOutputStream(convFile);
+            fos.write(file.getBytes());
+            fos.close();
+            BufferedReader bufferedReader=new BufferedReader(new FileReader(convFile));
+//            if(bufferedReader==null){
+//                bufferedReader=new BufferedReader(new FileReader("C:\\Users\\tuyen\\Downloads\\demo.csv"));
+//            }
             while ((line = bufferedReader.readLine())!=null){
                   String[] arr= line.split(",");
                   User user=new User();
@@ -77,13 +82,24 @@ public class UserService implements UserServiceImpl {
                   userServiceImpl.save(user);
 
             }
+            //lưu 1 list
+//            File file1 = new File("C:\\Users\\tuyen\\AppData\\Local\\Temp\\tomcat.8080.5249333685723584792\\work\\Tomcat\\localhost\\ROOT");
+//            file1.delete();
         }catch (NullPointerException e){
             e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
+//    @Override
+//    public List<User> getUserHome(Integer id) {
+//        List<User> listUser=userServiceImpl.getUser(id);
+//        return listUser;
+//    }
+    //Log4j / Sf4j
+    //Format output in success/error
+    //Call procedure in DB (in & out param)
+    //Connection DB: new Conn -> query -> Close; create conn pools
 
 }

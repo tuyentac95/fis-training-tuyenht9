@@ -1,9 +1,16 @@
 package com.example.userspringboot.controller;
 
 import com.example.userspringboot.entity.User;
+import com.example.userspringboot.service.impl.UserServiceCallImpl;
 import com.example.userspringboot.service.impl.UserServiceImpl;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.coyote.Response;
+import org.apache.juli.logging.Log;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,18 +20,30 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    //static Logger logger=Logger.getLogger(UserController.class.getName());
+    static Logger LOG= LogManager.getLogger(UserController.class.getName());
 
     @Autowired
-    private UserServiceImpl userServiceImpl;
+    private UserServiceCallImpl userServiceImpl;
 
     @PostMapping
     public User crateUser(@RequestBody User user) {
+        LOG.info("create user done!");
+        LOG.debug("demo",user.toString());
+        LOG.warn("create user",user.toString());
+//        userServiceImpl.createUser(user);
         return userServiceImpl.createUser(user);
+//        if(user1==null){
+//            return new ResponseEntity<>("Failed", HttpStatus.FAILED_DEPENDENCY);
+//        }
+//        return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Integer id, @RequestBody User user) {
+        LOG.info("parameter id: ",id);
         return userServiceImpl.updateUser(user, id);
+
     }
 
     @DeleteMapping("/{id}")
@@ -50,8 +69,17 @@ public class UserController {
             return;
         }
         userServiceImpl.uploadFile(file);
-//        File file1 = new File("C:\\Users\\tuyen\\AppData\\Local\\Temp\\tomcat.8080.5249333685723584792\\work\\Tomcat\\localhost\\ROOT");
-//        file1.delete();
+
+    }
+    @GetMapping("/home/{id}")
+    public ResponseEntity<?> getUserHome(@PathVariable Integer id){
+        List<User> listUser=userServiceImpl.getUserHome(id);
+        if(listUser.size()>0){
+            return new ResponseEntity<List<User>>(listUser,HttpStatus.OK);
+        }else {
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+        }
+
     }
 
 }

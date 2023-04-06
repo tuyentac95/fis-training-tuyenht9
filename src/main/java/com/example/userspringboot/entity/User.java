@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @NoArgsConstructor
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name="user")
-public class User {
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -22,7 +23,11 @@ public class User {
     private int age;
     @Column(name = "`add`")
     private String add;
-
+//    @Column(name = "`idhome`")
+//    private int idhome;
+//    @ManyToOne
+//    @JoinColumn(name = "`idhome`")
+//    private Home home;
     @Override
     public String toString() {
         return "User{" +
@@ -30,6 +35,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 ", add='" + add + '\'' +
+//                ", idhome=" + idhome +
                 '}';
     }
 }
